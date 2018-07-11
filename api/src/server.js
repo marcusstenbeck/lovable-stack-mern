@@ -6,11 +6,25 @@ const setupHTTPLogger = require("./setupHTTPLogger");
 
 const port = parseInt(process.env.PORT, 10) || 3001;
 
+/**
+ * Connect to database, notice that because we're
+ * using Docker Compose we can access the database
+ * by the host name `db`, which is the name of
+ * the service in the docker-compose.yml file.
+ *
+ * We connect on Mongo's default port (27017),
+ * and we're going to save everything into a
+ * database called `documents`. It's all in the
+ * connection URL. See Mongoose for more info.
+ */
 mongoose.connect(
   "mongodb://db:27017/documents",
   { useNewUrlParser: true }
 );
 
+/**
+ * Create a model that we use to talk to the database
+ */
 const Message = mongoose.model("Class", {
   createdAt: { type: String, required: true },
   text: { type: Number, required: true }
@@ -39,7 +53,6 @@ app.get("/messages", async (req, res) => {
 });
 
 app.post("/messages", async (req, res) => {
-  console.log(req.body);
   const { text } = req.body;
   const message = new Message({ createdAt: Date.now(), text });
   try {
